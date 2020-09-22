@@ -1,0 +1,17 @@
+{
+  "steps": [
+    {
+      "name": "gcr.io/cloud-builders/gcloud",
+      "args": [
+        "functions",
+        "deploy",
+        "notifier",
+        "--source=.",
+        "--trigger-http",
+        "--runtime=nodejs10",
+        "--region=europe-west1",
+        "--entry-point=helloPubSub"
+      ]
+    }
+  ]
+}

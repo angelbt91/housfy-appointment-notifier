@@ -1,5 +1,5 @@
 const puppeteer = require('puppeteer');
-require('dotenv').config()
+require('dotenv').config({path: 'config/.env'});
 
 /**
  * Triggered from a message on a Cloud Pub/Sub topic.
@@ -37,4 +37,3 @@ exports.helloPubSub = async (event, context) => {
         // TODO Add email sending logic
     }
 };
-
