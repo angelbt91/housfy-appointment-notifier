@@ -7,7 +7,7 @@
         "deploy",
         "notifier",
         "--source=.",
-        "--trigger-topic check-appointment",
+        "--trigger-topic",
         "--runtime=nodejs10",
         "--region=europe-west1",
         "--entry-point=helloPubSub"
