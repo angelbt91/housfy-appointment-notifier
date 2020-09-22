@@ -1,0 +1,19 @@
+{
+  "name": "housfy-appointment-notifier",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/angelbt91/housfy-appointment-notifier.git"
+  },
+  "author": "Angel Blanco",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/angelbt91/housfy-appointment-notifier/issues"
+  },
+  "homepage": "https://github.com/angelbt91/housfy-appointment-notifier#readme"
+}
