@@ -8,7 +8,7 @@ require('dotenv').config()
  * @param {!Object} context Metadata for the event.
  */
 exports.helloPubSub = async (event, context) => {
-    const browser = await puppeteer.launch({headless: false});
+    const browser = await puppeteer.launch({headless: true});
     const page = await browser.newPage();
 
     const response = await page.goto(process.env.URL_TO_CHECK, {waitUntil: "load"});
@@ -33,7 +33,7 @@ exports.helloPubSub = async (event, context) => {
     sendEmail();
 
     function sendEmail() {
-        console.log("Appointments are working! Sending email notifications...");
+        console.log(`Appointments are available for ${process.env.URL_TO_CHECK}! Proceeding to prepare email notification...`);
         // TODO Add email sending logic
     }
 };

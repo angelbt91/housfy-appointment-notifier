@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/angelbt91/housfy-appointment-notifier#readme",
   "dependencies": {
+    "@google-cloud/functions-framework": "^1.7.1",
     "dotenv": "^8.2.0",
     "node-fetch": "^2.6.1",
     "puppeteer": "^5.3.1"
