@@ -1,4 +1,3 @@
-const puppeteer = require('puppeteer');
 require('dotenv').config({path: 'config/.env'});
 
 /**
@@ -8,6 +7,7 @@ require('dotenv').config({path: 'config/.env'});
  * @param {!Object} context Metadata for the event.
  */
 exports.helloPubSub = async (event, context) => {
+    const puppeteer = require('puppeteer');
     const browser = await puppeteer.launch({headless: true});
     const page = await browser.newPage();
 
@@ -34,6 +34,25 @@ exports.helloPubSub = async (event, context) => {
 
     function sendEmail() {
         console.log(`Appointments are available for ${process.env.URL_TO_CHECK}! Proceeding to prepare email notification...`);
-        // TODO Add email sending logic
+
+        const sgMail = require('@sendgrid/mail')
+        sgMail.setApiKey(process.env.SENDGRID_API_KEY)
+
+        const recipients = process.env.EMAIL_TO.split(",").map(email => {
+            return {
+                email: email.trim()
+            }
+        })
+
+        const msg = {
+            personalizations: [{
+                to: recipients
+            }],
+            from: 'elbotde@angelblan.co',
+            subject: 'YA SE PUEDEN HACER VISITAS',
+            text: `CORRE, YA SE PUEDEN HACER VISITAS EN ${process.env.URL_TO_CHECK}`
+        }
+
+        sgMail.send(msg);
     }
 };
