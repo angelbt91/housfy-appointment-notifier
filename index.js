@@ -48,7 +48,7 @@ exports.helloPubSub = async (event, context) => {
             personalizations: [{
                 to: recipients
             }],
-            from: 'elbotde@angelblan.co',
+            from: process.env.EMAIL_FROM,
             subject: 'YA SE PUEDEN HACER VISITAS',
             text: `CORRE, YA SE PUEDEN HACER VISITAS EN ${process.env.URL_TO_CHECK}`
         }
