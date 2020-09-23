@@ -50,7 +50,8 @@ exports.helloPubSub = async (event, context) => {
             }],
             from: process.env.EMAIL_FROM,
             subject: 'YA SE PUEDEN HACER VISITAS',
-            text: `CORRE, YA SE PUEDEN HACER VISITAS EN ${process.env.URL_TO_CHECK}`
+            text: `CORRE, YA SE PUEDEN HACER VISITAS EN ${process.env.URL_TO_CHECK}`,
+            html: `<strong>CORRE, YA SE PUEDEN HACER VISITAS EN <a href=${process.env.URL_TO_CHECK}>${process.env.URL_TO_CHECK}</a></strong>`
         }
 
         sgMail.send(msg);
