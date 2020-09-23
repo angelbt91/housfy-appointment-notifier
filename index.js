@@ -7,14 +7,21 @@ require('dotenv').config({path: 'config/.env'});
  * @param {!Object} context Metadata for the event.
  */
 exports.helloPubSub = async (event, context) => {
+    const url = event.data ? Buffer.from(event.data, "base64").toString() : "";
+
+    if (!validURL(url)) {
+        console.log(`There is no URL passed on the PubSub cron payload: ${url}. Aborting.`);
+        return;
+    }
+
     const puppeteer = require('puppeteer');
     const browser = await puppeteer.launch({headless: true});
     const page = await browser.newPage();
 
-    const response = await page.goto(process.env.URL_TO_CHECK, {waitUntil: "load"});
+    const response = await page.goto(url, {waitUntil: "load"});
 
     if (response.headers().status !== "200") {
-        console.log(`Status code for page ${process.env.URL_TO_CHECK} is not 200: ${response.headers().status}. Aborting.`);
+        console.log(`Status code for page ${url} is not 200: ${response.headers().status}. Aborting.`);
         await browser.close();
         return;
     }
@@ -26,14 +33,14 @@ exports.helloPubSub = async (event, context) => {
     await browser.close();
 
     if (pageText.includes("Esta propiedad no tiene actualmente disponibilidad")) {
-        console.log(`Page ${process.env.URL_TO_CHECK} doesn't allow to schedule appointments. Aborting.`);
+        console.log(`Page ${url} doesn't allow to schedule appointments. Aborting.`);
         return;
     }
 
     sendEmail();
 
     function sendEmail() {
-        console.log(`Appointments are available for ${process.env.URL_TO_CHECK}! Proceeding to prepare email notification...`);
+        console.log(`Appointments are available for ${url}! Proceeding to prepare email notification...`);
 
         const sgMail = require('@sendgrid/mail')
         sgMail.setApiKey(process.env.SENDGRID_API_KEY)
@@ -50,10 +57,20 @@ exports.helloPubSub = async (event, context) => {
             }],
             from: process.env.EMAIL_FROM,
             subject: 'YA SE PUEDEN HACER VISITAS',
-            text: `CORRE, YA SE PUEDEN HACER VISITAS EN ${process.env.URL_TO_CHECK}`,
-            html: `<strong>CORRE, YA SE PUEDEN HACER VISITAS EN <a href=${process.env.URL_TO_CHECK}>${process.env.URL_TO_CHECK}</a></strong>`
+            text: `CORRE, YA SE PUEDEN HACER VISITAS EN ${url}`,
+            html: `<strong>CORRE, YA SE PUEDEN HACER VISITAS EN <a href=${url}>${url}</a></strong>`
         }
 
         sgMail.send(msg);
+    }
+
+    function validURL(str) {
+        const pattern = new RegExp('^(https?:\\/\\/)?'+ // protocol
+            '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|'+ // domain name
+            '((\\d{1,3}\\.){3}\\d{1,3}))'+ // OR ip (v4) address
+            '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*'+ // port and path
+            '(\\?[;&a-z\\d%_.~+=-]*)?'+ // query string
+            '(\\#[-a-z\\d_]*)?$','i'); // fragment locator
+        return !!pattern.test(str);
     }
 };
