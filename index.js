@@ -55,7 +55,10 @@ exports.helloPubSub = async (event, context) => {
             personalizations: [{
                 to: recipients
             }],
-            from: process.env.EMAIL_FROM,
+            from: {
+                email: process.env.EMAIL_FROM,
+                name: "El bot de Angel"
+            },
             subject: 'YA SE PUEDEN HACER VISITAS',
             text: `CORRE, YA SE PUEDEN HACER VISITAS EN ${url}`,
             html: `<strong>CORRE, YA SE PUEDEN HACER VISITAS EN <a href=${url}>${url}</a></strong>`
