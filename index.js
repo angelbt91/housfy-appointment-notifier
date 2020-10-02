@@ -7,37 +7,31 @@ require('dotenv').config({path: 'config/.env'});
  * @param {!Object} context Metadata for the event.
  */
 exports.helloPubSub = async (event, context) => {
-    const url = event.data ? Buffer.from(event.data, "base64").toString() : "";
+    const propertyId = event.data ? Buffer.from(event.data, "base64").toString() : "";
+    const url = `https://api.housfy.com/api/user/v1/public/properties/${propertyId}/appointment-availability`;
 
     if (!validURL(url)) {
-        console.log(`There is no URL passed on the PubSub cron payload: ${url}. Aborting.`);
+        console.log(`URL is not valid: ${url}. Aborting.`);
         return;
     }
 
-    const puppeteer = require('puppeteer');
-    const browser = await puppeteer.launch({headless: true});
-    const page = await browser.newPage();
-
-    const response = await page.goto(url, {waitUntil: "load"});
-
-    if (response.headers().status !== "200") {
-        console.log(`Status code for page ${url} is not 200: ${response.headers().status}. Aborting.`);
-        await browser.close();
-        return;
+    const fetch = require('node-fetch');
+    const options = {
+        "method": "GET",
+        "headers": {
+            "authorization": `Bearer ${process.env.HOUSFY_BEARER_TOKEN}`
+        }
     }
 
-    const pageText = await page.evaluate(() => {
-        return document.getElementsByTagName("body")[0].innerText;
+    await fetch(url, options).then(response => {
+        if (response.status === 200) {
+            sendEmail();
+        } else {
+            console.log(`Status code for ${url} is not 200: ${response.status}. Aborting.`);
+        }
+    }).catch(err => {
+        console.error("An error ocurred when fetching availability:", err);
     });
-
-    await browser.close();
-
-    if (pageText.includes("Esta propiedad no tiene actualmente disponibilidad")) {
-        console.log(`Page ${url} doesn't allow to schedule appointments. Aborting.`);
-        return;
-    }
-
-    sendEmail();
 
     function sendEmail() {
         console.log(`Appointments are available for ${url}! Proceeding to prepare email notification...`);
@@ -61,7 +55,7 @@ exports.helloPubSub = async (event, context) => {
             },
             subject: 'YA SE PUEDEN HACER VISITAS',
             text: `CORRE, YA SE PUEDEN HACER VISITAS EN ${url}`,
-            html: `<strong>CORRE, YA SE PUEDEN HACER VISITAS EN <a href=${url}>${url}</a></strong>`
+            html: `<strong>CORRE, YA SE PUEDEN HACER VISITAS EN <a href="https://housfy.com/appointment/${propertyId}">https://housfy.com/appointment/${propertyId}</a></strong>`
         }
 
         sgMail.send(msg);
