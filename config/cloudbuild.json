@@ -10,7 +10,7 @@
         "--trigger-topic=check-appointment",
         "--runtime=nodejs10",
         "--region=europe-west1",
-        "--entry-point=helloPubSub"
+        "--entry-point=main"
       ]
     }
   ]
