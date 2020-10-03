@@ -6,7 +6,7 @@ require('dotenv').config({path: 'config/.env'});
  * @param {!Object} event Event payload: the ID of the property.
  * @param {!Object} context Metadata for the event.
  */
-exports.helloPubSub = async (event, context) => {
+exports.main = async (event, context) => {
     const propertyId = event.data ? Buffer.from(event.data, "base64").toString() : "";
     const url = `https://api.housfy.com/api/user/v1/public/properties/${propertyId}/appointment-availability`;
 

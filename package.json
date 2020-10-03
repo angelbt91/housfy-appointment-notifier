@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "functions-framework --target=helloPubSub",
+    "start": "functions-framework --target=main",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
